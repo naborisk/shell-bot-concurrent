@@ -1,5 +1,6 @@
 FROM oven/bun
 WORKDIR /srv/app
-COPY . .
+COPY ./package.json .
+COPY ./index.ts .
 RUN bun install
-ENTRYPOINT [ "bun", "run", "src/index.ts" ]
+ENTRYPOINT [ "bun", "run", "index.ts" ]
