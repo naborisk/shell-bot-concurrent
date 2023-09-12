@@ -1,0 +1,8 @@
+node_modules
+Dockerfile
+.github
+.env
+.env.production
+.env.development
+.git
+README.md
