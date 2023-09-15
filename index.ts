@@ -1,7 +1,9 @@
 import { Client } from '@concurrent-world/client'
+import * as cowsay from 'cowsay'
 
-const commandPrefix = '/nya'
+const commandPrefix = Bun.env.COMMAND_PREFIX || '/sh'
 
+const ccid = Bun.env.CCID || ''
 const secretKey = Bun.env.SECRET_KEY || ''
 const host = Bun.env.CONCURRENT_HOST || ''
 const clientSig = 'shell-bot-concurrent'
@@ -15,11 +17,59 @@ await streamSocket.waitOpen()
 streamSocket.listen([postStream])
 
 streamSocket.on('MessageCreated', async e => {
+  if (e.owner === ccid) return
+
   const message: any = await client.getMessage(e.id, e.owner)
+
+  const command = message.body
+    .slice(commandPrefix.length)
+    .trimStart()
+    .split(' ')[0]
+
+  const args = message.body
+    .slice(commandPrefix.length + command.length + 1)
+    .trimStart()
+    .split(' ')
+
+  console.log(`command: ${command}`)
+  console.log(`args: ${typeof args} ${JSON.stringify(args)}`)
+  console.log(`e.id, e.owner: ${e.id}, ${e.owner}`)
+
   if (message.body && message.body.startsWith(commandPrefix)) {
-    switch (message.body) {
-      case `${commandPrefix} ping`:
+    switch (command) {
+      case `ping`:
         await client.reply(e.id, e.owner, [postStream], `pong`)
+        break
+
+      case 'echo':
+        await client.reply(
+          e.id,
+          e.owner,
+          [postStream],
+          args.join(' ').trimStart()
+        )
+        break
+
+      case 'cowsay':
+        await client.reply(
+          e.id,
+          e.owner,
+          [postStream],
+          '```' + cowsay.say({ text: args.join(' ') }) + '```'
+        )
+        break
+
+      case 'cowthink':
+        await client.reply(
+          e.id,
+          e.owner,
+          [postStream],
+          '```' + cowsay.think({ text: args.join(' ') }) + '```'
+        )
+        break
+
+      default:
+        await client.reply(e.id, e.owner, [postStream], `unknown command`)
         break
     }
   }
