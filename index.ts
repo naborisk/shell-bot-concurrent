@@ -13,6 +13,12 @@ const client = new Client(secretKey, host, clientSig)
 
 const streamSocket = client.newSocket()
 
+setInterval(() => {
+  console.log(
+    `${new Date().toLocaleTimeString()}: ${streamSocket.ws.readyState}`
+  )
+}, 1000)
+
 await streamSocket.waitOpen()
 streamSocket.listen([postStream])
 
