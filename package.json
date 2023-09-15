@@ -1,13 +1,15 @@
 {
   "name": "shell-bot-concurrent",
   "version": "1.0.50",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "bun run --watch index.ts"
   },
   "dependencies": {
     "@concurrent-world/client": "^2.2.10",
-    "cowsay": "^1.5.0"
+    "cowsay": "^1.5.0",
+    "dotenv": "^16.3.1"
   },
   "devDependencies": {
     "bun-types": "latest"
