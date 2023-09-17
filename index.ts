@@ -1,5 +1,6 @@
 import { Client } from '@concurrent-world/client'
 import * as cowsay from 'cowsay'
+import { rollDice } from './modules/dice'
 
 const commandPrefix = Bun.env.COMMAND_PREFIX || '/sh'
 
@@ -51,11 +52,11 @@ streamSocket.on('MessageCreated', async e => {
     .trimStart()
     .split(' ')
 
-  console.log(`command: ${command}`)
-  console.log(`args: ${typeof args} ${JSON.stringify(args)}`)
-  console.log(`e.id, e.owner: ${e.id}, ${e.owner}`)
-
   if (message.body && message.body.startsWith(commandPrefix)) {
+    console.log(`command: ${command}`)
+    console.log(`args: ${typeof args} ${JSON.stringify(args)}`)
+    console.log(`e.id, e.owner: ${e.id}, ${e.owner}`)
+
     switch (command) {
       case `ping`:
         await client.reply(e.id, e.owner, [postStream], `pong`)
@@ -85,6 +86,18 @@ streamSocket.on('MessageCreated', async e => {
           e.owner,
           [postStream],
           '```' + cowsay.think({ text: args.join(' ') }) + '```'
+        )
+        break
+
+      case 'dice':
+        const [sides, count] = args.join('').split('d').map(Number)
+        const res: Number[] = Array.from(Array(Number(count)))
+
+        await client.reply(
+          e.id,
+          e.owner,
+          [postStream],
+          `${res.map(() => rollDice(sides.toString())).join(', ')}`
         )
         break
 
