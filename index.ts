@@ -13,10 +13,22 @@ const client = new Client(secretKey, host, clientSig)
 
 const streamSocket = client.newSocket()
 
+streamSocket.ws.on('open', () => {
+  console.log('opened')
+})
+
+streamSocket.on('error', e => {
+  console.error(e)
+})
+
+streamSocket.ws.on('close', () => {
+  console.log('closed')
+})
+
 setInterval(() => {
-  console.log(
-    `${new Date().toLocaleTimeString()}: ${streamSocket.ws.readyState}`
-  )
+  // console.log(
+  //   `${new Date().toLocaleTimeString()}: ${streamSocket.ws.readyState}`
+  // )
 }, 1000)
 
 await streamSocket.waitOpen()
@@ -79,12 +91,4 @@ streamSocket.on('MessageCreated', async e => {
         break
     }
   }
-})
-
-streamSocket.on('error', e => {
-  console.error(e)
-})
-
-streamSocket.on('close', () => {
-  console.log('closed')
 })
