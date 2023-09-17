@@ -15,7 +15,4 @@
     "bun-types": "latest"
   },
   "module": "src/index.js",
-  "volta": {
-    "node": "18.17.1"
-  }
 }
