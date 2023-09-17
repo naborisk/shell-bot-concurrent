@@ -91,13 +91,15 @@ streamSocket.on('MessageCreated', async e => {
 
       case 'dice':
         const [sides, count] = args.join('').split('d').map(Number)
-        const res: Number[] = Array.from(Array(Number(count)))
+        const arr: Number[] = Array.from(Array(Number(count)))
+        const res = arr.map(() => rollDice(sides.toString()))
 
         await client.reply(
           e.id,
           e.owner,
           [postStream],
-          `${res.map(() => rollDice(sides.toString())).join(', ')}`
+          `${count}個の${sides}面サイコロを振りました
+          合計: ${res.reduce((acc, cur) => acc + cur)}\n${res.join(' ')}`
         )
         break
 
