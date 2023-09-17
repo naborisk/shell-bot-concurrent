@@ -26,7 +26,7 @@ streamSocket.ws.on('close', () => {
 })
 
 streamSocket.ws.on('pong', () => {
-  console.log(`${new Date().toLocaleTimeString()}: pong`)
+  Bun.spawn(['touch', '/tmp/pong'])
 })
 
 setInterval(() => {
