@@ -25,11 +25,13 @@ streamSocket.ws.on('close', () => {
   console.log('closed')
 })
 
+streamSocket.ws.on('pong', () => {
+  console.log(`${new Date().toLocaleTimeString()}: pong`)
+})
+
 setInterval(() => {
-  // console.log(
-  //   `${new Date().toLocaleTimeString()}: ${streamSocket.ws.readyState}`
-  // )
-}, 1000)
+  streamSocket.ws.ping()
+}, 1000 * 5)
 
 await streamSocket.waitOpen()
 streamSocket.listen([postStream])
