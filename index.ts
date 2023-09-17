@@ -89,7 +89,7 @@ streamSocket.on('MessageCreated', async e => {
         )
         break
 
-      case 'dice':
+      case 'roll':
         const [sides, count] = args.join('').split('d').map(Number)
         const arr: Number[] = Array.from(Array(Number(count)))
         const res = arr.map(() => rollDice(sides.toString()))
