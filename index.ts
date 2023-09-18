@@ -103,6 +103,12 @@ streamSocket.on('MessageCreated', async e => {
         )
         break
 
+      case 'jpdict':
+        const proc = Bun.spawn(['myougiden', ...args])
+        const text = await new Response(proc.stdout).text()
+        await client.reply(e.id, e.owner, [postStream], text)
+        break
+
       default:
         await client.reply(e.id, e.owner, [postStream], `unknown command`)
         break
