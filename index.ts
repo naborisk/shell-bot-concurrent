@@ -90,7 +90,7 @@ streamSocket.on('MessageCreated', async e => {
         break
 
       case 'roll':
-        const [sides, count] = args.join('').split('d').map(Number)
+        const [count, sides] = args.join('').split('d').map(Number)
         const arr: Number[] = Array.from(Array(Number(count)))
         const res = arr.map(() => rollDice(sides.toString()))
 
@@ -124,7 +124,7 @@ streamSocket.on('MessageCreated', async e => {
   cowthink: Linuxのcowthinkコマンドと同じ
     /con cowthink <text>
   roll: サイコロを振る
-    /con roll <面数>d<個数>
+    /con roll <個数>d<面数>
   jpdict: 辞書で単語を検索
     /con jpdict <word>`
         )
