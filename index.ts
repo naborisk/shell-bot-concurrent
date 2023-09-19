@@ -109,6 +109,15 @@ streamSocket.on('MessageCreated', async e => {
         await client.reply(e.id, e.owner, [postStream], text)
         break
 
+      case 'current':
+        await client.reply(
+          e.id,
+          e.owner,
+          [postStream],
+          `只今${new Date().toLocaleTimeString('ja-JP')}でございます。`
+        )
+        break
+
       case 'help':
         await client.reply(
           e.id,
