@@ -109,6 +109,27 @@ streamSocket.on('MessageCreated', async e => {
         await client.reply(e.id, e.owner, [postStream], text)
         break
 
+      case 'help':
+        await client.reply(
+          e.id,
+          e.owner,
+          [postStream],
+          '```' +
+            `
+コマンド一覧:
+  ping: pongを返す
+    /con ping
+  cowsay: Linuxのcowsayコマンドと同じ
+    /con cowsay <text>
+  cowthink: Linuxのcowthinkコマンドと同じ
+    /con cowthink <text>
+  rollDice: サイコロを振る
+    /con roll <面数>d<個数>
+  jpdict: 辞書で検索する
+    /con jpdict <word>`
+        )
+        break
+
       default:
         await client.reply(e.id, e.owner, [postStream], `unknown command`)
         break
