@@ -123,9 +123,9 @@ streamSocket.on('MessageCreated', async e => {
     /con cowsay <text>
   cowthink: Linuxのcowthinkコマンドと同じ
     /con cowthink <text>
-  rollDice: サイコロを振る
+  roll: サイコロを振る
     /con roll <面数>d<個数>
-  jpdict: 辞書で検索する
+  jpdict: 辞書で単語を検索
     /con jpdict <word>`
         )
         break
