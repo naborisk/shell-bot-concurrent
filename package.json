@@ -7,7 +7,7 @@
     "dev": "bun run --watch index.ts"
   },
   "dependencies": {
-    "@concurrent-world/client": "^2.2.10",
+    "@concurrent-world/client": "^3.0.6",
     "cowsay": "^1.5.0",
     "dotenv": "^16.3.1"
   },
