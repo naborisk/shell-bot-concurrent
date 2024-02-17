@@ -7,9 +7,9 @@
     "dev": "bun run --watch index.ts"
   },
   "dependencies": {
-    "@concurrent-world/client": "^3.0.6",
-    "cowsay": "^1.5.0",
-    "dotenv": "^16.3.1"
+    "@concurrent-world/client": "^4.2.0",
+    "cowsay": "^1.6.0",
+    "dotenv": "^16.4.4"
   },
   "devDependencies": {
     "bun-types": "latest"
