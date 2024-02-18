@@ -19,107 +19,109 @@ const client = new Client(
   ccid
 )
 
-client.newSocket().then(async socket => {
-  socket.ws.on('open', () => {
-    console.log('opened')
-  })
+client
+  .newSocket()
+  .then(async socket => {
+    socket.ws.on('open', () => {
+      console.log('opened')
+    })
 
-  socket.ws.on('error', (e: Error) => {
-    console.error(e)
-  })
+    socket.ws.on('error', (e: Error) => {
+      console.error(e)
+    })
 
-  socket.ws.on('close', () => {
-    console.log('closed')
-  })
+    socket.ws.on('close', () => {
+      console.log('closed')
+    })
 
-  socket.ws.on('pong', () => {
-    Bun.spawn(['touch', '/tmp/pong'])
-  })
+    socket.ws.on('pong', () => {
+      Bun.spawn(['touch', '/tmp/pong'])
+    })
 
-  setInterval(() => {
-    socket.ws.ping()
-  }, 1000 * 5)
+    setInterval(() => {
+      socket.ws.ping()
+    }, 1000 * 5)
 
-  await socket.waitOpen()
-  socket.listen([postStream], async s => {
-    if (s.body.author === ccid) return
-    console.log(s)
+    await socket.waitOpen()
+    socket.listen([postStream], async s => {
+      if (s.body.author === ccid) return
+      console.log(s)
 
-    // the message object
-    const m = await client.getMessage(s.body.id, s.body.author)
+      // the message object
+      const m = await client.getMessage(s.body.id, s.body.author)
 
-    const message = s.body.payload.body
+      const message = s.body.payload.body
 
-    const command = s.body.payload.body.body
-      .slice(commandPrefix.length)
-      .trimStart()
-      .split(' ')[0]
+      const command = s.body.payload.body.body
+        .slice(commandPrefix.length)
+        .trimStart()
+        .split(' ')[0]
 
-    console.log(`command: ${command}`)
-
-    const args = message.body
-      .slice(commandPrefix.length + command.length + 1)
-      .trimStart()
-      .split(' ')
-
-    if (message.body && message.body.startsWith(commandPrefix)) {
       console.log(`command: ${command}`)
-      console.log(`args: ${typeof args} ${JSON.stringify(args)}`)
-      console.log(`s.body.id, s.body.author: ${s.body.id}, ${s.body.author}`)
 
-      switch (command) {
-        case `ping`:
-          await m?.reply([postStream], `pong`)
-          break
+      const args = message.body
+        .slice(commandPrefix.length + command.length + 1)
+        .trimStart()
+        .split(' ')
 
-        case 'echo':
-          await m?.reply([postStream], args.join(' ').trimStart())
-          break
+      if (message.body && message.body.startsWith(commandPrefix)) {
+        console.log(`command: ${command}`)
+        console.log(`args: ${typeof args} ${JSON.stringify(args)}`)
+        console.log(`s.body.id, s.body.author: ${s.body.id}, ${s.body.author}`)
 
-        case 'cowsay':
-          await m?.reply(
-            [postStream],
-            '```' + cowsay.say({ text: args.join(' ') }) + '```'
-          )
-          break
+        switch (command) {
+          case `ping`:
+            await m?.reply([postStream], `pong`)
+            break
 
-        case 'cowthink':
-          await m?.reply(
-            [postStream],
-            '```' + cowsay.think({ text: args.join(' ') }) + '```'
-          )
-          break
+          case 'echo':
+            await m?.reply([postStream], args.join(' ').trimStart())
+            break
 
-        case 'roll':
-          const [count, sides] = args.join('').split('d').map(Number)
-          const arr: Number[] = Array.from(Array(Number(count)))
-          const res = arr.map(() => rollDice(sides.toString()))
+          case 'cowsay':
+            await m?.reply(
+              [postStream],
+              '```' + cowsay.say({ text: args.join(' ') }) + '```'
+            )
+            break
 
-          await m?.reply(
-            [postStream],
-            `${count}個の${sides}面サイコロを振りました
+          case 'cowthink':
+            await m?.reply(
+              [postStream],
+              '```' + cowsay.think({ text: args.join(' ') }) + '```'
+            )
+            break
+
+          case 'roll':
+            const [count, sides] = args.join('').split('d').map(Number)
+            const arr: Number[] = Array.from(Array(Number(count)))
+            const res = arr.map(() => rollDice(sides.toString()))
+
+            await m?.reply(
+              [postStream],
+              `${count}個の${sides}面サイコロを振りました
               合計: ${res.reduce((acc, cur) => acc + cur)}\n${res.join(' ')}`
-          )
-          break
+            )
+            break
 
-        case 'jpdict':
-          const proc = Bun.spawn(['myougiden', ...args])
-          const text = await new Response(proc.stdout).text()
-          await m?.reply([postStream], text)
-          break
+          case 'jpdict':
+            const proc = Bun.spawn(['myougiden', ...args])
+            const text = await new Response(proc.stdout).text()
+            await m?.reply([postStream], text)
+            break
 
-        case 'current':
-          await m?.reply(
-            [postStream],
-            `只今${new Date().toLocaleTimeString('ja-JP')}でございます。`
-          )
-          break
+          case 'current':
+            await m?.reply(
+              [postStream],
+              `只今${new Date().toLocaleTimeString('ja-JP')}でございます。`
+            )
+            break
 
-        case 'help':
-          await m?.reply(
-            [postStream],
-            '```' +
-              `
+          case 'help':
+            await m?.reply(
+              [postStream],
+              '```' +
+                `
     コマンド一覧:
       ping: pongを返す
         /con ping
@@ -131,17 +133,20 @@ client.newSocket().then(async socket => {
         /con roll <個数>d<面数>
       jpdict: 辞書で単語を検索
         /con jpdict <word>`
-          )
-          break
+            )
+            break
 
-        default:
-          await m?.reply([postStream], `unknown command`)
-          break
+          default:
+            await m?.reply([postStream], `unknown command`)
+            break
+        }
       }
-    }
-  })
+    })
 
-  socket.ws.on('message', (s: any) => {
-    // console.log(s.toString())
+    socket.ws.on('message', (s: any) => {
+      // console.log(s.toString())
+    })
   })
-})
+  .catch(e => {
+    console.error(e)
+  })
