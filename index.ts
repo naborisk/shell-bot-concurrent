@@ -16,13 +16,12 @@ const ccid = Bun.env.CCID || ''
   const sub = await client.newSubscription()
   await sub.listen([postStream])
 
-  sub.on('MessageCreated', message => {
-    console.log(message)
-  })
+  let replied = true
 
   sub.on('MessageCreated', async s => {
     if (s.body.author === ccid) return
     console.log(s)
+    replied = false
 
     // the message object
     const m = await client.getMessage(s.body.id, s.body.author)
@@ -41,10 +40,13 @@ const ccid = Bun.env.CCID || ''
       .trimStart()
       .split(' ')
 
-    if (message.body && message.body.startsWith(commandPrefix)) {
+    if (!replied && message.body && message.body.startsWith(commandPrefix)) {
       console.log(`command: ${command}`)
       console.log(`args: ${typeof args} ${JSON.stringify(args)}`)
       console.log(`s.body.id, s.body.author: ${s.body.id}, ${s.body.author}`)
+
+      replied = true
+      console.log('replied')
 
       switch (command) {
         case `ping`:
